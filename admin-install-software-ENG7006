@@ -86,12 +86,12 @@ dseditgroup -o edit -t user -a $username staff
 cp -R /System/Library/User\ Template/English.lproj /Users/$username
 chown -R $username:staff /Users/$username
 
-echo "Setting up testuser rbenv environment."
+echo "Setting up ENG 7006 user rbenv environment."
 (echo 'export PATH="$HOME/.rbenv/bin:$PATH"'
- echo 'eval "$(rbenv init -)"') | sudo tee -a  /Users/testuser/.bash_profile >/dev/null
+ echo 'eval "$(rbenv init -)"') | sudo tee -a  /Users/eng7006/.bash_profile >/dev/null
 
-echo "Logging in as testuser."
-sudo -i -u testuser /bin/bash <<- EOF
+echo "Logging in as eng7006."
+sudo -i -u eng7006 /bin/bash <<- EOF
   # install ruby using rbenv
   echo "Installing and setting up Ruby 2.2.3. This will take a long while."
   rbenv install 2.2.3
