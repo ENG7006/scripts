@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 # set up our sudo
 echo "Installing ENG 7006 software. This script will need just a little bit of babysitting, but it shouldn't take long. Let's start with an administrator password."
 
 sudo echo "Starting install scripts."
 
 # install the xcode cli tools, and a little applescript to avoid having to click buttons
-echo "Installing XCode CLI tools."
+echo "Installing XCode CLI tools..."
 xcode-select --install
 sleep 1
 osascript <<EOD
@@ -16,16 +16,20 @@ osascript <<EOD
     end tell
   end tell
 EOD
+echo "Installed XCode CLI tools."
 
 # download and install Homebrew
-echo "Installing Homebrew."
+echo "Installing Homebrew..."
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+echo "Installed Homebrew."
 
 # download Homebrew Cask
-echo "Installing Cask."
+echo "Installing Cask..."
 brew install caskroom/cask/brew-cask
+echo "Installed Cask."
 
 # cask-install our five main gui apps;
+echo "Installing programming environment apps..."
 # we may have to enter an admin password at this stage
 echo "Installing Google Chrome."
 brew cask install google-chrome
@@ -37,27 +41,85 @@ echo "Installing Slack."
 brew cask install slack
 echo "Installing p5.js."
 brew cask install p5
+echo "Installing Flux."
+brew cask install flux
+echo "Installed programming environment apps."
 
-# install rbenv
-echo "Installing rbenv and ruby-build."
-brew install rbenv ruby-build
-
-# set the admin user's bash profile to work with rbenv, just because
-echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
-echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
-source ~/.bash_profile
-
+echo "Installing other CLI tools..."
 # install other CLI tools
 echo "Installing node.js."
 brew install node
 echo "Installing the Heroku Toolbelt."
 brew install heroku-toolbelt
+echo "Installed other CLI tools."
 
-echo "Copying scripts to student user."
-sudo cp ./student-install-software-ENG7006 /Users/student/
+echo "Installing and setting up Ruby environment."
+# install rbenv
+echo "Installing rbenv and ruby-build."
+brew install rbenv ruby-build
 
-echo "If all went according to plan, everything should now be installed properly!"
-echo "Please run the script student-install-software-ENG7006 as user student to complete installation."
-echo "If you would like to use Jekyll as this user, please also run student-install-software-ENG7006 as this user."
+# set the admin user's bash profile to work with rbenv, just because
+echo "Setting up admin user rbenv environment."
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
 
-echo "BYE!"
+# creating the ENG 7006 user
+echo "Creating the ENG 7006 user."
+username=eng7006
+realname="ENG 7006"
+password="eng7006!"
+
+maxid=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)
+newid=$((maxid+1))
+
+sudo dscl . -create /Users/$username
+sudo dscl . -create /Users/$username UserShell /bin/bash
+sudo dscl . -create /Users/$username RealName "$realname"
+sudo dscl . -create /Users/$username UniqueID "$newid"
+sudo dscl . -create /Users/$username PrimaryGroupID 20
+sudo dscl . -create /Users/$username NFSHomeDirectory /Users/$username
+
+dscl . -passwd /Users/$username $password
+
+dseditgroup -o edit -t user -a $username staff
+
+cp -R /System/Library/User\ Template/English.lproj /Users/$username
+chown -R $username:staff /Users/$username
+
+echo "Setting up testuser rbenv environment."
+(echo 'export PATH="$HOME/.rbenv/bin:$PATH"'
+ echo 'eval "$(rbenv init -)"') | sudo tee -a  /Users/testuser/.bash_profile >/dev/null
+
+echo "Logging in as testuser."
+sudo -i -u testuser /bin/bash <<- EOF
+  # install ruby using rbenv
+  echo "Installing and setting up Ruby 2.2.3. This will take a long while."
+  rbenv install 2.2.3
+  # make the ruby we use the rbenv ruby (not system ruby)
+  rbenv global 2.2.3
+  # make absolute sure our shell is up to date and using the right ruby
+  # this is almost certainly redundant
+  rbenv rehash
+
+  echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
+
+  echo "Installing Bundler."
+  gem install bundler
+
+  echo "Installing Jekyll."
+  # install jekyll (it will install with current ruby)
+  gem install jekyll
+
+  # be sure the shell is up to date
+  source ~/.bash_profile
+
+  # make sure these work the way they're supposed to
+  echo "Checking installation of Ruby and Jekyll."
+  echo "Ruby should be 2.2.3 (not 2.0.0!)."
+  ruby -v
+  echo "Jekyll should be installed at all."
+  jekyll -v
+
+  echo "If everything has gone according to plan, you now have a working Ruby and Jekyll installation."
+
+EOF
