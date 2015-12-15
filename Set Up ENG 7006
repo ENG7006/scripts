@@ -24,25 +24,37 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 echo "Installed Homebrew."
 
 # download Homebrew Cask
-echo "Installing Cask..."
-brew install caskroom/cask/brew-cask
-echo "Installed Cask."
+#echo "Installing Cask..."
+#brew install caskroom/cask/brew-cask
+#echo "Installed Cask."
 
 # cask-install our five main gui apps;
 echo "Installing programming environment apps..."
 # we may have to enter an admin password at this stage
 echo "Installing Google Chrome."
-brew cask install google-chrome
+#brew cask install google-chrome
+cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Google\ Chrome.app /Applications
+
 echo "Installing Atom."
-brew cask install atom
+#brew cask install atom
+cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Atom.app /Applications
+
 echo "Installing GitHub Desktop."
-brew cask install github-desktop
+#brew cask install github-desktop
+cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/GitHub\ Desktop.app /Applications
+
 echo "Installing Slack."
-brew cask install slack
+#brew cask install slack
+cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Slack.app /Applications
+
 echo "Installing p5.js."
-brew cask install p5
+#brew cask install p5
+cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/p5.app /Applications
+
 echo "Installing Flux."
-brew cask install flux
+#brew cask install flux
+cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Flux.app /Applications
+
 echo "Installed programming environment apps."
 
 echo "Installing other CLI tools..."
@@ -92,8 +104,30 @@ echo "Setting up ENG 7006 user rbenv environment."
 
 echo "Logging in as eng7006."
 sudo -i -u eng7006 /bin/bash <<- EOF
+
+  # copy standard Atom settings across
+  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/Atom\ Settings ~/.atom
+
+  # create a folder with ENG 7006 GUI apps on the ENG 7006 User desktop
+  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/ ~/Desktop/
+
+  # create symlinks/aliases for all the ENG 7006 applications
+  cd ~/Desktop
+  ln -s /Applications/p5.app
+  mv p5.app p5
+  ln -s /Applications/Atom.app
+  mv Atom.app Atom
+  ln -s /Applications/Google\ Chrome.app
+  mv Google\ Chrome.app Chrome
+  ln -s /Applications/GitHub\ Desktop.app
+  mv GitHub\ Desktop.app GitHub\ Desktop
+  ln -s /Applications/Slack.app
+  mv Slack.app Slack
+  ln -s /Applications/Flux.app
+  mv Flux.app Flux
+
   # install ruby using rbenv
-  echo "Installing and setting up Ruby 2.2.3. This will take a long while."
+  echo "Installing and setting up Ruby 2.2.3. This will take a minute."
   rbenv install 2.2.3
   # make the ruby we use the rbenv ruby (not system ruby)
   rbenv global 2.2.3
@@ -120,6 +154,9 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   echo "Jekyll should be installed at all."
   jekyll -v
 
-  echo "If everything has gone according to plan, you now have a working Ruby and Jekyll installation."
-
 EOF
+
+echo "If everything has gone according to plan, you now have:"
+echo "--A working Ruby and Jekyll installation"
+echo "--The ENG 7006 development environment: p5, Atom, Chrome, GitHub Desktop, and Slack"
+echo "--An installation of Flux to save your sleep and eyes"
