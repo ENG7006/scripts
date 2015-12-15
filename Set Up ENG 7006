@@ -109,7 +109,7 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   cp -R /Volumes/Install\ OS\ X\ El\ Capitan/Atom\ Settings ~/.atom
 
   # create a folder with ENG 7006 GUI apps on the ENG 7006 User desktop
-  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/ ~/Desktop/
+  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/ ~/Desktop/ENG\ 7006\ App\ Copies--Copy\ To\ Thumbdrive
 
   # create symlinks/aliases for all the ENG 7006 applications
   cd ~/Desktop
