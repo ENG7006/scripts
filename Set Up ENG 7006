@@ -28,32 +28,36 @@ echo "Installed Homebrew."
 #brew install caskroom/cask/brew-cask
 #echo "Installed Cask."
 
+# detect directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+APPDIR="$DIR/ENG\ 7006\ Apps"
+
 # cask-install our five main gui apps;
 echo "Installing programming environment apps..."
 # we may have to enter an admin password at this stage
 echo "Installing Google Chrome."
 #brew cask install google-chrome
-cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Google\ Chrome.app /Applications
+cp -R $APPDIR/Google\ Chrome.app /Applications
 
 echo "Installing Atom."
 #brew cask install atom
-cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Atom.app /Applications
+cp -R $APPDIR/Atom.app /Applications
 
 echo "Installing GitHub Desktop."
 #brew cask install github-desktop
-cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/GitHub\ Desktop.app /Applications
+cp -R $APPDIR/GitHub\ Desktop.app /Applications
 
 echo "Installing Slack."
 #brew cask install slack
-cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Slack.app /Applications
+cp -R $APPDIR/Slack.app /Applications
 
 echo "Installing p5.js."
 #brew cask install p5
-cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/p5.app /Applications
+cp -R $APPDIR/p5.app /Applications
 
 echo "Installing Flux."
 #brew cask install flux
-cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Flux.app /Applications
+cp -R $APPDIR/Flux.app /Applications
 
 echo "Installed programming environment apps."
 
@@ -106,10 +110,10 @@ echo "Logging in as eng7006."
 sudo -i -u eng7006 /bin/bash <<- EOF
 
   # copy standard Atom settings across
-  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/Atom\ Settings ~/.atom
+  cp -R $DIR/Atom\ Settings ~/.atom
 
   # create a folder with ENG 7006 GUI apps on the ENG 7006 User desktop
-  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/ ~/Desktop/
+  cp -R $APPDIR ~/Desktop/
 
   # create symlinks/aliases for all the ENG 7006 applications
   cd ~/Desktop
