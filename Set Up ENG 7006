@@ -112,10 +112,12 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   # copy standard Atom settings across
   cp -R $DIR/Atom\ Settings ~/.atom
 
+  # set up ENG 7006 student desktop
+
   # create a folder with ENG 7006 GUI apps on the ENG 7006 User desktop
   cp -R $APPDIR ~/Desktop/
 
-  # create symlinks/aliases for all the ENG 7006 applications
+  # create symlinks/aliases for all the ENG 7006 applications on the destkop
   cd ~/Desktop
   ln -s /Applications/p5.app
   mv p5.app p5
@@ -129,6 +131,8 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   mv Slack.app Slack
   ln -s /Applications/Flux.app
   mv Flux.app Flux
+
+  cp $APPDIR/Interactive\ JavaScript ./
 
   # install ruby using rbenv
   echo "Installing and setting up Ruby 2.2.3. This will take a minute."
