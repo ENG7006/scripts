@@ -148,9 +148,14 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   echo "Installing Bundler."
   gem install bundler
 
-  echo "Installing Jekyll."
+  echo "Installing Jekyll and dependencies."
   # install jekyll (it will install with current ruby)
   gem install jekyll
+
+  # installing useful jekyll packages
+  gem install jekyll-paginate
+  gem install jekyll-gist
+  gem install redcarpet
 
   # be sure the shell is up to date
   source ~/.bash_profile
