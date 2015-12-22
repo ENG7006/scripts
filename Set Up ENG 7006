@@ -7,16 +7,6 @@ sudo echo "Starting install scripts."
 # install the xcode cli tools, and a little applescript to avoid having to click buttons
 echo "Installing XCode CLI tools..."
 xcode-select --install
-sleep 1
-osascript <<EOD
-  tell application "System Events"
-    tell process "Install Command Line Developer Tools"
-      keystroke return
-      click button "Agree" of window "License Agreement"
-    end tell
-  end tell
-EOD
-echo "Installed XCode CLI tools."
 
 # download and install Homebrew
 echo "Installing Homebrew..."
@@ -28,32 +18,36 @@ echo "Installed Homebrew."
 #brew install caskroom/cask/brew-cask
 #echo "Installed Cask."
 
+# detect directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+APPDIR="$DIR/ENG 7006 Apps"
+
 # cask-install our five main gui apps;
 echo "Installing programming environment apps..."
 # we may have to enter an admin password at this stage
 echo "Installing Google Chrome."
 #brew cask install google-chrome
-cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Google\ Chrome.app /Applications
+cp -R "$APPDIR/Google Chrome.app" /Applications
 
 echo "Installing Atom."
 #brew cask install atom
-cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Atom.app /Applications
+cp -R "$APPDIR/Atom.app" /Applications
 
 echo "Installing GitHub Desktop."
 #brew cask install github-desktop
-cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/GitHub\ Desktop.app /Applications
+cp -R "$APPDIR/GitHub Desktop.app" /Applications
 
 echo "Installing Slack."
 #brew cask install slack
-cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Slack.app /Applications
+cp -R "$APPDIR/Slack.app" /Applications
 
 echo "Installing p5.js."
 #brew cask install p5
-cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/p5.app /Applications
+cp -R "$APPDIR/p5.app" /Applications
 
 echo "Installing Flux."
 #brew cask install flux
-cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/Flux.app /Applications
+cp -R "$APPDIR/Flux.app" /Applications
 
 echo "Installed programming environment apps."
 
@@ -79,7 +73,7 @@ echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
 echo "Creating the ENG 7006 user."
 username=eng7006
 realname="ENG 7006"
-password="eng7006!"
+password="eng7006"
 
 maxid=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)
 newid=$((maxid+1))
@@ -91,12 +85,12 @@ sudo dscl . -create /Users/$username UniqueID "$newid"
 sudo dscl . -create /Users/$username PrimaryGroupID 20
 sudo dscl . -create /Users/$username NFSHomeDirectory /Users/$username
 
-dscl . -passwd /Users/$username $password
+sudo dscl . -passwd /Users/$username $password
 
-dseditgroup -o edit -t user -a $username staff
+sudo dseditgroup -o edit -t user -a $username staff
 
-cp -R /System/Library/User\ Template/English.lproj /Users/$username
-chown -R $username:staff /Users/$username
+sudo cp -R /System/Library/User\ Template/English.lproj /Users/$username
+sudo chown -R $username:staff /Users/$username
 
 echo "Setting up ENG 7006 user rbenv environment."
 (echo 'export PATH="$HOME/.rbenv/bin:$PATH"'
@@ -106,12 +100,14 @@ echo "Logging in as eng7006."
 sudo -i -u eng7006 /bin/bash <<- EOF
 
   # copy standard Atom settings across
-  cp -Rf /Volumes/Install\ OS\ X\ El\ Capitan/Atom\ Settings ~/.atom
+  cp -R "$DIR/Atom Settings" ~/.atom
+
+  # set up ENG 7006 student desktop
 
   # create a folder with ENG 7006 GUI apps on the ENG 7006 User desktop
-  cp -R /Volumes/Install\ OS\ X\ El\ Capitan/ENG\ 7006\ Apps/ ~/Desktop/ENG\ 7006\ App\ Copies--Copy\ To\ Thumbdrive
+  cp -R "$APPDIR" "~/Desktop/ENG 7006 App Copies--Copy To Thumbdrive"
 
-  # create symlinks/aliases for all the ENG 7006 applications
+  # create symlinks/aliases for all the ENG 7006 applications on the destkop
   cd ~/Desktop
   ln -s /Applications/p5.app p5
   ln -s /Applications/Atom.app Atom
@@ -119,6 +115,8 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   ln -s /Applications/GitHub\ Desktop.app GitHub\ Desktop
   ln -s /Applications/Slack.app Slack
   ln -s /Applications/Flux.app Flux
+
+  cp "$APPDIR/Interactive JavaScript" ./
 
   # install ruby using rbenv
   echo "Installing and setting up Ruby 2.2.3. This will take a minute..."
@@ -137,9 +135,15 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   echo "Installing Bundler."
   gem install bundler
 
-  echo "Installing Jekyll."
+  echo "Installing Jekyll and dependencies."
   # install jekyll (it will install with current ruby)
   gem install jekyll
+
+  # installing useful jekyll packages
+  gem install jekyll-paginate
+  gem install jekyll-gist
+  gem install jekyll-feed
+  gem install redcarpet
 
   # be sure the shell is up to date
   source ~/.bash_profile
