@@ -155,6 +155,7 @@ sudo -i -u eng7006 /bin/bash <<- EOF
   # installing useful jekyll packages
   gem install jekyll-paginate
   gem install jekyll-gist
+  gem install jekyll-feed
   gem install redcarpet
 
   # be sure the shell is up to date
